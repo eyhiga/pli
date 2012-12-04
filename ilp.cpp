@@ -89,13 +89,27 @@ int ILP(Param_mapnet * parametros, string algoritmo) {
    /* Função Objetivo */
    IloExpr expr_objetivo(env);
 
-   for(int u = 0; u < parametros->num_nf; u++) {
-      for(int v = 0; v < parametros->num_nf; v++) {
-         for(int w = 0; w < parametros->num_ev; w++) {
-            expr_objetivo += Y[u][v][w] * parametros->c_ev_b[w];
-         }
-      }
-   }
+    for(int k=0; k<*NUMERO_DE_HOSTS*; k++)
+    {
+        for(int t=0; t<*TEMPOS_DE_TERMINO*; t++)
+        {
+            expr_objetivo += *ALPHA* * P[k][t] + *LAMBDA* * U[k][t];
+        }
+    }
+    
+    for(int k=0; k<*NUMERO_DE_HOSTS*; k++)
+    {
+        for(int l=0; l<*NUMERO_DE_HOSTS*; j++)
+        {
+            for(int i=0; i<*NUMERO_DE_TAREFAS*; i++)
+            {
+                for(int j=0; j<*NUMERO_DE_TAREFAS*; j++)
+                {
+                    expr_objetivo += 8 * *TEMPO_TRANSMISSAO[k][l]* * *NUMERO_DE_BYTES[i][j]* * y[i][j][k][l] * (2 * *GAMA* + *BETA[k][l]*)
+                }
+            }
+        }
+    }
 
    IloObjective obj = IloMinimize(env, expr_objetivo);
    model.add(obj);
