@@ -122,15 +122,56 @@ int ILP(Param_mapnet * parametros, string algoritmo) {
    // Restrição 1 - Restrição para garantir que para um nó virtual será alocado em exatamente
    // um nó físico e irá utilizar exatamente uma imagem virtual
    //
-   for(int m = 0; m < parametros->num_nv; m++) {
+   for(int j = 0; j < *NUMERO_DE_TAREFAS*; j++) {
       IloExpr expr_restricao1(env);
-      for(int n = 0; n < parametros->num_nf; n++) {
-         for(int i = 0; i < parametros->num_ni; i++) {
-            expr_restricao1 += X[n][m][i];
+      for(int t = 0; t < *TEMPOS_DE_TERMINO*; t++) {
+         for(int k = 0; k < *NUMERO_DE_HOSTS*; k++) {
+            expr_restricao1 += X[j][t][k];
          }
       }
       model.add(expr_restricao1 == 1);
    }
+
+  // Restricao 5
+  for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+  {
+    for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+    {
+      IloExpr expr_restricao5(env);
+      expr_restricao5 = U[k][t] - P[k][t];
+      model.add(expr_restricao5 >= 0);
+    } 
+  }  
+
+  // Restricao 6
+  for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+  {
+    for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+    {
+      IloExpr expr_restricao6(env);
+      expr_restricao6 = P[k][t] - (U[k][t] / C[k]);
+      model.add(expr_restricao6 >= 0);
+    }
+  }
+
+  // Restricao 7
+  for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+  {
+    for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+    {
+      IloExpr expr_restricao7(env);
+
+      for(int j=0; j < *NUMERO_DE_TAREFAS*; j++)
+      {
+        for(int s=t; s < *T + I[j] * TI[k] - 1*; s++)
+        {
+          expr_restricao7 += X[j][s][k];
+        }
+      }
+
+      model.add(U[k][t] = expr_restricao7);
+    }
+  }
 
    //
    // Resolver
