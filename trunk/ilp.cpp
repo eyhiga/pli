@@ -117,11 +117,7 @@ int ILP(Param_mapnet * parametros, string algoritmo) {
    /************************************************
                        RESTRICOES
    *************************************************/
-
-   //
-   // Restrição 1 - Restrição para garantir que para um nó virtual será alocado em exatamente
-   // um nó físico e irá utilizar exatamente uma imagem virtual
-   //
+   // Restricao 1
    for(int j = 0; j < *NUMERO_DE_TAREFAS*; j++) {
       IloExpr expr_restricao1(env);
       for(int t = 0; t < *TEMPOS_DE_TERMINO*; t++) {
@@ -131,6 +127,39 @@ int ILP(Param_mapnet * parametros, string algoritmo) {
       }
       model.add(expr_restricao1 == 1);
    }
+
+   // Restricao 2
+   for(int j=0; j < *NUMERO_DE_TAREFAS*; j++)
+   {
+      for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+      {
+        for(int t=1; t < ceil(I[j] * TI[k]); t++)
+        {
+          IloExpr expr_restricao2(env);
+          expr_restricao2 = X[j][t][k];
+          model.add(expr_restricao2 = 0);
+        }
+      } 
+   }
+
+  // Restricao 3
+  
+  // Restricao 4
+  for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+  {
+    for(int t=0; t <= ceil(Tmax - I[j] * TI[k]); t++)
+    {
+      IloExpr expr_restricao4(env);
+      for(int j=0; j < *NUMERO_DE_TAREFAS*; j++)
+      {
+        for(int s=1; s < ceil(t-I[j] * TI[l] - B[i][j] * TK[k][l]))
+        {
+          expr_restricao4 += X[i][s][k];
+        }
+      }
+      model.add(expr_restricao4 <= C[k]);
+    }
+  }
 
   // Restricao 5
   for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
@@ -170,6 +199,83 @@ int ILP(Param_mapnet * parametros, string algoritmo) {
       }
 
       model.add(U[k][t] = expr_restricao7);
+    }
+  }
+
+
+  // Restricao 8
+  for(int i=0; i < *NUMERO_DE_TAREFAS*; i++)
+  {
+    for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+    {
+      IloExpr expr_restricao8(env);
+      for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+      {
+        expr_restricao += X[i][t][k];
+      }
+      model.add(F[i][k] = expr_restricao);
+    }
+  }
+
+  //Restricao 9
+  for(int i=0; i < *NUMERO_DE_TAREFAS*; i++)
+  {
+    for(int k=0; k < *NUMERO_DE_TAREFAS*; k++)
+    {
+      for(int l=0; l < *NUMERO_DE_HOSTS*; l++)
+      {
+        IloExpr expr_restricao9(env);
+        expr_restricao9 = F[i][k] + F[k][l];
+        model.add(2 * Y[i][k][k][l] <= expr_restricao);
+      }
+    }
+  }
+
+  // Restricao 10
+  for(int i=0; i < *NUMERO_DE_TAREFAS*; i++)
+  {
+    for(int k=0; k < *NUMERO_DE_TAREFAS*; k++)
+    {
+      for(int l=0; l < *NUMERO_DE_HOSTS*; l++)
+      {
+        IloExpr expr_restricao10(env);
+        expr_restricao10 = F[i][k] + F[k][l] - 1;
+        model.add(Y[i][k][k][l] >= expr_restricao10);
+      }
+    }
+  }
+
+  // Restricao 11
+  for(int j=0; j < *NUMERO_DE_TAREFAS*; j++)
+  {
+    for(int l=0; l < *NUMERO DE HOSTS*; l++)
+    {
+      for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+      {
+        IloExpr expr_restricao11(env);
+        expr_restricao11();
+      }
+    }
+  }
+
+  // Restricao 12
+  for(int k=0; k < *NUMERO_DE_HOSTS*; k++)
+  {
+    for(int t=0; t < *TEMPOS_DE_TERMINO*; t++)
+    {
+      IloExpr expr_restricao12(env);
+    }
+  }
+
+  // Restricao 13
+  for(int i=0; i < *NUMERO_DE_TASKS*; i++)
+  {
+    for(int k=0; k < *NUMERO_DE_TASKS*; k++)
+    {
+      for(int l=0; l < *NUMERO_DE_HOSTS*; l++)
+      {
+        IloExpr expr_restricao13(env);
+      }
     }
   }
 
