@@ -1,0 +1,28 @@
+./parser simple_100_app.dat simple_100_app-1.dat NOVA_SEMENTE
+Semente usada: 1354622644
+
+./parser simple_100_app.dat simple_100_app-2.dat NOVA_SEMENTE
+Semente usada: 1354622649
+
+./parser simple_100_app.dat simple_100_app-3.dat NOVA_SEMENTE
+Semente usada: 1354622653
+
+
+./parser montage_10_app.dat montage_10_app-1.dat NOVA_SEMENTE
+Semente usada: 1354622876
+
+./parser montage_10_app.dat montage_10_app-2.dat NOVA_SEMENTE
+Semente usada: 1354622880
+
+./parser montage_10_app.dat montage_10_app-3.dat NOVA_SEMENTE
+Semente usada: 1354622883
+
+
+./parser wien2k_100_app.dat wien2k_100_app-1.dat NOVA_SEMENTE
+Semente usada: 1354622908
+
+./parser wien2k_100_app.dat wien2k_100_app-2.dat NOVA_SEMENTE
+Semente usada: 1354622912
+
+./parser wien2k_100_app.dat wien2k_100_app-3.dat NOVA_SEMENTE
+Semente usada: 1354622916
