@@ -16,4 +16,10 @@ struct Grid {
 	float TB[MAXIMO_HOSTS][MAXIMO_HOSTS];
 };
 
+/*
+ * Encontra o índice da máquina mais lenta em termos de processamento
+ * no grid.
+ */
+int hostMaisLento(Grid *grid);
+
 #endif

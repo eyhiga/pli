@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +35,7 @@ int main(int argc, char *argv[]) {
 	int simulando = 1;
 	int tempo = 0;
 	int nrequisicoes = 0;
+	int tMax = 0;
 	char arquivoDag[100];
 	DAG dag;
 	Grid grid;
@@ -51,9 +53,19 @@ int main(int argc, char *argv[]) {
 
 	// Carrega configuração da rede do grid
 	// TODO
+	// Por simplificação, um host com um processador de um núcleo
+	// que executa 1 instrução por unidade de tempo
+	// por enquanto
+	grid.m = 1; // um host
+	grid.TI[0] = 1; // tempo de processar uma instrução
+	grid.C[0] = 1; // um núcleo no host 1
+	grid.N[0][0] = 1; // N[x][x]=1 para todo x<m (enlace de host pra ele mesmo)
+	grid.TB[0][0] = 0; // tempo de transmissão para próprio host é nulo
 	
+	float velocidadeMaisLenta = grid.TI[hostMaisLento(&grid)];
+
 	while (simulando) {
-		int intervalo = 3; // tempo de diferença que cehegará a próxima requisição
+		int intervalo = 3; // tempo de diferença que chegará a próxima requisição
 		int dagEscolhido;
 		tempo += intervalo;
 		
@@ -74,6 +86,15 @@ int main(int argc, char *argv[]) {
 		/* Carrega DAG */
 		carregaGrafo(arquivoDag, &dag);
 		sorteiaPesosGrafo(&dag);
+		
+		/* Calcula T_max (tempo de execução sequencial na máquina mais lenta
+		da grade do DAG */
+		float tempo = 0;
+		int i;
+		for (i=0;i<dag.n;i++) {
+			tempo += dag.S[i]*velocidadeMaisLenta;
+		}
+		tMax = ceil(tempo);
 
 		/* Chama escalonador */
 		
