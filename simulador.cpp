@@ -5,6 +5,7 @@
 #include <time.h>
 #include "dag.hpp"
 #include "grid.hpp"
+#include "ilp.hpp"
 
 #define NOVA_SEMENTE "NOVA_SEMENTE"
 
@@ -98,11 +99,13 @@ int main(int argc, char *argv[]) {
 		tMax = ceil(tempo);
 
 		/* Chama escalonador */
+		int saida = ILP(&dag, &grid, tMax, P_CHASSI, P_CORE, P_LINECARD, "");
+		printf("Saida: %d\n", saida);
 		
 		/* Calcula novo estado da rede */
 		
 		/* Atualiza requisições recebidas e verifica se continua simulação */
 		nrequisicoes++;
-		simulando = (nrequisicoes < 10);
+		simulando = (nrequisicoes < 1);
 	}
 }

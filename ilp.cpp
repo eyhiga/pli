@@ -23,7 +23,7 @@ que parametros é um punteiro a uma estrutura que contém toda a informação qu
  
     Também é possível parametrizar outras coisas, como bandeiras para determinar quais restrições a ser usadas ou parametros para determinar se alguma heuristicas vai ser usada. **/
 
-int ILP(DAG * dag, Grid * grid, int tMax, float alpha, float beta[MAXIMO_HOSTS][MAXIMO_HOSTS],
+int ILP(DAG * dag, Grid * grid, int tMax, float alpha,
 float gama, float lambda, string algoritmo) {
 
 	//IloBoolVarArray é a estrutura para guardar as variaveis do problema. São estruturas do mesmo CPLEX, use elas ao inves de matrices/punteiros do C
@@ -117,7 +117,7 @@ float gama, float lambda, string algoritmo) {
 				for(int j=0; j<dag->n; j++)
 				{
 					if (dag->D[i][j] == 1)
-					expr_objetivo += 8 * grid->TB[k][l] * dag->B[i][j] * Y[i][j][k][l] * (2 * gama + beta[k][l]);
+					expr_objetivo += 8 * grid->TB[k][l] * dag->B[i][j] * Y[i][j][k][l] * (2 * gama + grid->P_E[k][l]);
 				}
 			}
 		}
