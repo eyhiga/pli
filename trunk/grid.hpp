@@ -2,6 +2,9 @@
 #define HOSTS_HPP
 
 #define MAXIMO_HOSTS 500
+#define P_CHASSI 1.0 // alpha
+#define P_CORE 1.0 // gama
+#define P_LINECARD 1.0 // lambda
 
 struct Grid {
 	int m; // número de máquinas na grade
@@ -14,6 +17,9 @@ struct Grid {
 	// matriz com os valores de tempo para transmitir um bit entre dois hosts
 	// Valores de interesse TB[x][y] estão presentes para valores de x e y tais que N[x][y]=1
 	float TB[MAXIMO_HOSTS][MAXIMO_HOSTS];
+	
+	// BETA da formulação, custo de uso de um determinado enlace
+	float P_E[MAXIMO_HOSTS][MAXIMO_HOSTS];
 };
 
 /*

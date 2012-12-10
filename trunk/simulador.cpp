@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
 	grid.C[0] = 1; // um núcleo no host 1
 	grid.N[0][0] = 1; // N[x][x]=1 para todo x<m (enlace de host pra ele mesmo)
 	grid.TB[0][0] = 0; // tempo de transmissão para próprio host é nulo
+	grid.P_E[0][0] = 0; // enlace sem custo associado, não existe na prática
 	
 	float velocidadeMaisLenta = grid.TI[hostMaisLento(&grid)];
 
