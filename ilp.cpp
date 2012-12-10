@@ -56,8 +56,10 @@ float gama, float lambda, string algoritmo) {
 	}
    
 	/* Y, indica transferência de dados entre duas tarefas
-	TODO verificar limites de tamanho, pois nem todas tarefas
-	possuem dependências */
+	 * Nota: verificar limites de tamanho, pois nem todas tarefas
+	 * possuem dependências.
+	 * Solução: Vamos ignorar as não usadas por enquanto
+	 */
 	IloBoolVarArray4 Y(env, dag->n);
 	for (int i = 0; i < dag->n; i++) {
 		Y[i] = IloBoolVarArray3(env, dag->n);
@@ -72,10 +74,10 @@ float gama, float lambda, string algoritmo) {
 	}
    
 	/* U, núcleos (cores) em uso de máquina em determinado tempo */
-	IloBoolVarArray2 U(env, grid->m);
+	IloIntVarArray2 U(env, grid->m);
 	for(int i=0; i < grid->m, i++)
 	{
-		U[i] = IloBoolVarArray(env, tMax);
+		U[i] = IloIntVarArray(env, tMax);
 	}
 
 	/* P, indica se chassi está em uso */
@@ -105,17 +107,18 @@ float gama, float lambda, string algoritmo) {
 	}
 
 	/* Parte do consumo dos enlaces
-	 * TODO: mesmo comentário que está na variável Y
 	 * TODO: TEMPO_TRANSMISSAO, NUMERO_DE_BYTES, BETA
 	 */
 	for(int k=0; k<grid->m; k++)
 	{
 		for(int l=0; l<grid->m; j++)
 		{
+			if (grid->N[k][l] == 1)
 			for(int i=0; i<dag->n; i++)
 			{
 				for(int j=0; j<dag->n; j++)
 				{
+					if (dag->D[i][j] == 1)
 					expr_objetivo += 8 * *TEMPO_TRANSMISSAO[k][l]* * *NUMERO_DE_BYTES[i][j]* * y[i][j][k][l] * (2 * gama + *beta[k][l]*)
 				}
 			}
@@ -144,11 +147,11 @@ float gama, float lambda, string algoritmo) {
 	{
 		for(int k=0; k < grid->m; k++)
 		{
-			for(int t=1; t < ceil(I[j] * grid->TI[k]); t++)
+			for(int t=0; t < ceil(I[j] * grid->TI[k]); t++)
 			{
 				IloExpr expr_restricao2(env);
 				expr_restricao2 = X[j][t][k];
-				model.add(expr_restricao2 = 0);
+				model.add(expr_restricao2 == 0);
 			}
 		}
 	}
@@ -157,20 +160,19 @@ float gama, float lambda, string algoritmo) {
 	// TODO fazer
   
 	// Restricao 4
-	// TODO Ajuda!
 	for(int k=0; k < grid->m; k++)
 	{
-		for(int t=0; t < ceil(Tmax - dag->S[j] * grid->TI[k]); t++)
+		for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k]); t++)
 		{
 			IloExpr expr_restricao4(env);
 			for(int j=0; j < dag->n; j++)
 			{
-				for(int s=1; s < ceil(t-dag->S[j] * grid->TI[l] - B[i][j] * TK[k][l]))
+				for(int s=t; s < ceil(t-dag->S[j] * grid->TI[l] - 1); s++)
 				{
 					expr_restricao4 += X[i][s][k];
 				}
 			}
-			model.add(expr_restricao4 <= C[k]);
+			model.add(expr_restricao4 <= grid->C[k]);
 		}
 	}
 
@@ -191,7 +193,7 @@ float gama, float lambda, string algoritmo) {
 		for(int t=0; t < tMax; t++)
 		{
 			IloExpr expr_restricao6(env);
-			expr_restricao6 = P[k][t] - (U[k][t] / C[k]);
+			expr_restricao6 = P[k][t] - (U[k][t] / grid->C[k]);
 			model.add(expr_restricao6 >= 0);
 		}
 	}
@@ -205,12 +207,12 @@ float gama, float lambda, string algoritmo) {
 
 			for(int j=0; j < dag->n; j++)
 			{
-				for(int s=t; s < t + dag->S[j] * grid->TI[k] - 1; s++)
+				for(int s=t; s < ceil(t + dag->S[j] * grid->TI[k] - 1); s++)
 				{
 					expr_restricao7 += X[j][s][k];
 				}
 			}
-			model.add(U[k][t] = expr_restricao7);
+			model.add(U[k][t] == expr_restricao7);
 		}
 	}
 
@@ -225,36 +227,44 @@ float gama, float lambda, string algoritmo) {
 			{
 				expr_restricao += X[i][t][k];
 			}
-			model.add(F[i][k] = expr_restricao);
+			model.add(F[i][k] == expr_restricao);
 		}
 	}
 
 	//Restricao 9
-	// TODO verificar dependências DAG e enlaces
 	for(int i=0; i < dag->n; i++)
 	{
-		for(int k=0; k < dag->n; k++)
+		for(int j=0; j < dag->n; j++)
 		{
-			for(int l=0; l < grid->m; l++)
+			if (dag->D[i][j] == 1)
+			for(int k=0; k < grid->m; k++)
 			{
-				IloExpr expr_restricao9(env);
-				expr_restricao9 = F[i][k] + F[k][l];
-				model.add(2 * Y[i][k][k][l] <= expr_restricao);
+				for(int l=0; l < grid->m; l++)
+				if (grid->N[k][l] == 1)
+				{
+					IloExpr expr_restricao9(env);
+					expr_restricao9 = F[i][k] + F[j][l];
+					model.add(2 * Y[i][j][k][l] <= expr_restricao);
+				}
 			}
 		}
 	}
 
 	// Restricao 10
-	// TODO verificar dependências DAG e enlaces (mesmo R9)
-	for(int i=0; i < *NUMERO_DE_TAREFAS*; i++)
+	for(int i=0; i < dag->n; i++)
 	{
-		for(int k=0; k < *NUMERO_DE_TAREFAS*; k++)
+		for(int j=0; j < dag->n; j++)
 		{
-			for(int l=0; l < *NUMERO_DE_HOSTS*; l++)
+			if (dag->D[i][j] == 1)
+			for(int k=0; k < grid->m; k++)
 			{
-				IloExpr expr_restricao10(env);
-				expr_restricao10 = F[i][k] + F[k][l] - 1;
-				model.add(Y[i][k][k][l] >= expr_restricao10);
+				for(int l=0; l < grid->m; l++)
+				if (grid->N[k][l] == 1)
+				{
+					IloExpr expr_restricao10(env);
+					expr_restricao10 = F[i][k] + F[j][l] - 1;
+					model.add(Y[i][j][k][l] >= expr_restricao10);
+				}
 			}
 		}
 	}
