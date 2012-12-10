@@ -107,7 +107,6 @@ float gama, float lambda, string algoritmo) {
 	}
 
 	/* Parte do consumo dos enlaces
-	 * TODO: TEMPO_TRANSMISSAO, NUMERO_DE_BYTES, BETA
 	 */
 	for(int k=0; k<grid->m; k++)
 	{
@@ -157,7 +156,38 @@ float gama, float lambda, string algoritmo) {
 	}
 
 	// Restricao 3
-	// TODO fazer
+	for(int i=0; i < dag->n; i++)
+	{
+		for(int j=0; j < dag->n; j++)
+		{
+			if (dag->D[i][j] == 1)
+			for(int l=0; l < grid->m; l++)
+			{
+				for(int t = 0; t < tMax; t++) {
+					
+					IloExpr expr_restricao3-1(env);
+					IloExpr expr_restricao3-2(env);
+					
+					for(int k=0; k < grid->m; k++)
+					if (grid->N[k][l] == 1)
+					{
+						for(int s=0; s < ceil(t-dag->S[j] * grid->TI[l] - B[i][j] * TK[k][l]);s++)
+						{
+							expr_restricao3-1 += X[i][s][k];
+						}
+					}
+					
+					for(int s=0; s < t; s++)
+					{
+						expr_restricao3-2 += X[j][s][l];
+					}
+					
+					model.add(expr_restricao3-1 <= expr_restricao3-2);
+				}
+			}
+			
+		}
+	}
   
 	// Restricao 4
 	for(int k=0; k < grid->m; k++)
