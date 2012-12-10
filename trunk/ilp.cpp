@@ -313,7 +313,7 @@ float gama, float lambda, string algoritmo) {
 
 	/** Esta seção é para modificar o problema para que execute de forma mais rapida (implementação de heuristicas) **/
 	try {
-		if (algoritmo == "root_cplex-mip2"){ //Root Node Heuristic: Procura soluções alcansáveis na raiz da árvore da busca. 
+		/*if (algoritmo == "root_cplex-mip2"){ //Root Node Heuristic: Procura soluções alcansáveis na raiz da árvore da busca. 
 			cplex.setParam(IloCplex::NodeLim, 1);
 		}
 		else {
@@ -331,7 +331,7 @@ float gama, float lambda, string algoritmo) {
 					}
 				}
 			}
-		}
+		}*/
 		cplex.setParam(IloCplex::WorkMem, 512);
 		cplex.setParam(IloCplex::WorkDir, "./");
 		cplex.setParam(IloCplex::MemoryEmphasis, 1); // Ativo
@@ -356,7 +356,7 @@ float gama, float lambda, string algoritmo) {
 	//
 	// Atualizar variáveis de saída
 	//
-	try {
+	/*try {
 		for (int i = 0; i < parametros->num_nf; i++) {
 			for (int j = 0; j < parametros->num_nv; j++) {
 				for (int k = 0; k < parametros->num_ni; k++) {
@@ -383,7 +383,7 @@ float gama, float lambda, string algoritmo) {
 				mapeou = -1;
 			}
 		}
-	}
+	}*/
 
 	//
 	// Saída do CPLEX
