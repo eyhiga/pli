@@ -5,7 +5,7 @@
 #define PESO_MAX 100
 
 struct DAG {
-	int n; // número de vértives
+	int n; // número de vértices
 	int S[MAXIMO_VERTICES]; // peso dos vértices
 	int B[MAXIMO_VERTICES][MAXIMO_VERTICES]; // peso das arestas
 	int D[MAXIMO_VERTICES][MAXIMO_VERTICES]; // matriz de adjacência
