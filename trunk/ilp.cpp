@@ -119,7 +119,7 @@ float gama, float lambda, string algoritmo) {
 				for(int j=0; j<dag->n; j++)
 				{
 					if (dag->D[i][j] == 1)
-					expr_objetivo += 8 * *TEMPO_TRANSMISSAO[k][l]* * *NUMERO_DE_BYTES[i][j]* * y[i][j][k][l] * (2 * gama + *beta[k][l]*)
+					expr_objetivo += 8 * grid->TB[k][l] * dag->B[i][j] * Y[i][j][k][l] * (2 * gama + beta[k][l])
 				}
 			}
 		}
