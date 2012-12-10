@@ -30,16 +30,15 @@ float gama, float lambda, string algoritmo) {
 
 	typedef IloArray < IloBoolVarArray > IloBoolVarArray2; 
 	typedef IloArray < IloBoolVarArray2 > IloBoolVarArray3;
-	typedef IloArray < IloBoolVarArray3 > IloBoolVarArray5;
-	typedef IloArray < IloBoolVarArray4 > IloBoolVarArray4;
+	typedef IloArray < IloBoolVarArray3 > IloBoolVarArray4;
 
 	// Para a variavel inteira, usem IloIntVarArray
 
 	typedef IloArray < IloIntVarArray > IloIntVarArray2; 
 	typedef IloArray < IloIntVarArray2 > IloIntVarArray3;
-	typedef IloArray < IloIntVarArray3 > IloIntVarArray5;
-	typedef IloArray < IloIntVarArray4 > IloIntVarArray4;
+	typedef IloArray < IloIntVarArray3 > IloIntVarArray4;
 
+	int mapeou;
 
 	IloEnv env;
 	IloModel model(env);
@@ -63,7 +62,7 @@ float gama, float lambda, string algoritmo) {
 	IloBoolVarArray4 Y(env, dag->n);
 	for (int i = 0; i < dag->n; i++) {
 		Y[i] = IloBoolVarArray3(env, dag->n);
-		for(int j = 0; j < dag->n, j++)
+		for(int j = 0; j < dag->n; j++)
 		{
 			Y[i][j] = IloBoolVarArray2(env, grid->m);
 			for(int k = 0; k < grid->m; k++)
@@ -75,21 +74,21 @@ float gama, float lambda, string algoritmo) {
    
 	/* U, núcleos (cores) em uso de máquina em determinado tempo */
 	IloIntVarArray2 U(env, grid->m);
-	for(int i=0; i < grid->m, i++)
+	for(int i=0; i < grid->m; i++)
 	{
 		U[i] = IloIntVarArray(env, tMax);
 	}
 
 	/* P, indica se chassi está em uso */
 	IloBoolVarArray2 P(env, grid->m);
-	for(int i=0; i < grid->m, i++)
+	for(int i=0; i < grid->m; i++)
 	{
 		P[i] = IloBoolVarArray(env, tMax);
 	}
 
 	/* F, Indica se uma tarefa foi executada em determinada máquina */
 	IloBoolVarArray2 F(env, dag->n);
-	for(int i=0; i < dag->n, i++)
+	for(int i=0; i < dag->n; i++)
 	{
 		F[i] = IloBoolVarArray(env, grid->m);
 	}
@@ -110,7 +109,7 @@ float gama, float lambda, string algoritmo) {
 	 */
 	for(int k=0; k<grid->m; k++)
 	{
-		for(int l=0; l<grid->m; j++)
+		for(int l=0; l<grid->m; l++)
 		{
 			if (grid->N[k][l] == 1)
 			for(int i=0; i<dag->n; i++)
@@ -118,7 +117,7 @@ float gama, float lambda, string algoritmo) {
 				for(int j=0; j<dag->n; j++)
 				{
 					if (dag->D[i][j] == 1)
-					expr_objetivo += 8 * grid->TB[k][l] * dag->B[i][j] * Y[i][j][k][l] * (2 * gama + beta[k][l])
+					expr_objetivo += 8 * grid->TB[k][l] * dag->B[i][j] * Y[i][j][k][l] * (2 * gama + beta[k][l]);
 				}
 			}
 		}
@@ -146,7 +145,7 @@ float gama, float lambda, string algoritmo) {
 	{
 		for(int k=0; k < grid->m; k++)
 		{
-			for(int t=0; t < ceil(I[j] * grid->TI[k]); t++)
+			for(int t=0; t < ceil(dag->S[j] * grid->TI[k]); t++)
 			{
 				IloExpr expr_restricao2(env);
 				expr_restricao2 = X[j][t][k];
@@ -165,24 +164,24 @@ float gama, float lambda, string algoritmo) {
 			{
 				for(int t = 0; t < tMax; t++) {
 					
-					IloExpr expr_restricao3-1(env);
-					IloExpr expr_restricao3-2(env);
+					IloExpr expr_restricao3_1(env);
+					IloExpr expr_restricao3_2(env);
 					
 					for(int k=0; k < grid->m; k++)
 					if (grid->N[k][l] == 1)
 					{
-						for(int s=0; s < ceil(t-dag->S[j] * grid->TI[l] - B[i][j] * TK[k][l]);s++)
+						for(int s=0; s < ceil(t-dag->S[j] * grid->TI[l] - dag->B[i][j] * grid->TB[k][l]);s++)
 						{
-							expr_restricao3-1 += X[i][s][k];
+							expr_restricao3_1 += X[i][s][k];
 						}
 					}
 					
 					for(int s=0; s < t; s++)
 					{
-						expr_restricao3-2 += X[j][s][l];
+						expr_restricao3_2 += X[j][s][l];
 					}
 					
-					model.add(expr_restricao3-1 <= expr_restricao3-2);
+					model.add(expr_restricao3_1 <= expr_restricao3_2);
 				}
 			}
 			
@@ -192,17 +191,16 @@ float gama, float lambda, string algoritmo) {
 	// Restricao 4
 	for(int k=0; k < grid->m; k++)
 	{
-		for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k]); t++)
-		{
-			IloExpr expr_restricao4(env);
-			for(int j=0; j < dag->n; j++)
+		for (int j=0; j < dag->n; j++) {
+			for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k]); t++)
 			{
-				for(int s=t; s < ceil(t-dag->S[j] * grid->TI[l] - 1); s++)
+				IloExpr expr_restricao4(env);
+				for(int s=t; s < ceil(t-dag->S[j] * grid->TI[k] - 1); s++)
 				{
-					expr_restricao4 += X[i][s][k];
+					expr_restricao4 += X[j][s][k];
 				}
+				model.add(expr_restricao4 <= grid->C[k]);
 			}
-			model.add(expr_restricao4 <= grid->C[k]);
 		}
 	}
 
@@ -255,9 +253,9 @@ float gama, float lambda, string algoritmo) {
 			IloExpr expr_restricao8(env);
 			for(int t=0; t < tMax; t++)
 			{
-				expr_restricao += X[i][t][k];
+				expr_restricao8 += X[i][t][k];
 			}
-			model.add(F[i][k] == expr_restricao);
+			model.add(F[i][k] == expr_restricao8);
 		}
 	}
 
@@ -274,7 +272,7 @@ float gama, float lambda, string algoritmo) {
 				{
 					IloExpr expr_restricao9(env);
 					expr_restricao9 = F[i][k] + F[j][l];
-					model.add(2 * Y[i][j][k][l] <= expr_restricao);
+					model.add(2 * Y[i][j][k][l] <= expr_restricao9);
 				}
 			}
 		}
@@ -335,7 +333,7 @@ float gama, float lambda, string algoritmo) {
 		cplex.setParam(IloCplex::WorkMem, 512);
 		cplex.setParam(IloCplex::WorkDir, "./");
 		cplex.setParam(IloCplex::MemoryEmphasis, 1); // Ativo
-		cplex.setParam(IloCplex::Threads, cores);   // "Cores" quantidade de nucleos a usar. Olhar restrições de uso das simuladoras (n/2 por usuário) 
+		cplex.setParam(IloCplex::Threads, 1);   // "Cores" quantidade de nucleos a usar. Olhar restrições de uso das simuladoras (n/2 por usuário)
 		cplex.setParam(IloCplex::ParallelMode, 0);   // Automatico
 		cplex.solve();
 	} catch (IloCplex::Exception e) {
