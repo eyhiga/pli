@@ -12,11 +12,6 @@
 #include "dag.hpp"
 #include "grid.hpp"
 
-#define ALPHA 1.0
-#define LAMBDA 1.0
-#define GAMA 1.0
-
-
 using namespace std;
 
 //
@@ -28,7 +23,8 @@ que parametros é um punteiro a uma estrutura que contém toda a informação qu
  
     Também é possível parametrizar outras coisas, como bandeiras para determinar quais restrições a ser usadas ou parametros para determinar se alguma heuristicas vai ser usada. **/
 
-int ILP(DAG * dag, Grid * grid, int tMax, string algoritmo) {
+int ILP(DAG * dag, Grid * grid, int tMax, float alpha, float beta[MAXIMO_HOSTS][MAXIMO_HOSTS],
+float gama, float lambda, string algoritmo) {
 
 	//IloBoolVarArray é a estrutura para guardar as variaveis do problema. São estruturas do mesmo CPLEX, use elas ao inves de matrices/punteiros do C
 
@@ -104,7 +100,7 @@ int ILP(DAG * dag, Grid * grid, int tMax, string algoritmo) {
 	{
 		for(int t=0; t<dag->n; t++)
 		{
-			expr_objetivo += ALPHA * P[k][t] + LAMBDA * U[k][t];
+			expr_objetivo += alpha * P[k][t] + lambda * U[k][t];
 		}
 	}
 
@@ -120,7 +116,7 @@ int ILP(DAG * dag, Grid * grid, int tMax, string algoritmo) {
 			{
 				for(int j=0; j<dag->n; j++)
 				{
-					expr_objetivo += 8 * *TEMPO_TRANSMISSAO[k][l]* * *NUMERO_DE_BYTES[i][j]* * y[i][j][k][l] * (2 * GAMA + *BETA[k][l]*)
+					expr_objetivo += 8 * *TEMPO_TRANSMISSAO[k][l]* * *NUMERO_DE_BYTES[i][j]* * y[i][j][k][l] * (2 * gama + *beta[k][l]*)
 				}
 			}
 		}
@@ -277,7 +273,7 @@ int ILP(DAG * dag, Grid * grid, int tMax, string algoritmo) {
 
 	/** Esta seção é para modificar o problema para que execute de forma mais rapida (implementação de heuristicas) **/
 	try {
-		if (algoritmo == "root_cplex-mip2"){ //Root Node Heuristic: Procura soluções alcanzaveis na raiz da árvore da busca. 
+		if (algoritmo == "root_cplex-mip2"){ //Root Node Heuristic: Procura soluções alcansáveis na raiz da árvore da busca. 
 			cplex.setParam(IloCplex::NodeLim, 1);
 		}
 		else {
