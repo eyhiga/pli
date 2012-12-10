@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <math.h>
-#include <string>
 #include <fstream>
 #include "ilcplex/ilocplex.h"
 #include "ilconcert/iloxmlcontext.h"
@@ -24,7 +23,7 @@ que parametros é um punteiro a uma estrutura que contém toda a informação qu
     Também é possível parametrizar outras coisas, como bandeiras para determinar quais restrições a ser usadas ou parametros para determinar se alguma heuristicas vai ser usada. **/
 
 int ILP(DAG * dag, Grid * grid, int tMax, float alpha,
-float gama, float lambda, string algoritmo) {
+float gama, float lambda) {
 
 	//IloBoolVarArray é a estrutura para guardar as variaveis do problema. São estruturas do mesmo CPLEX, use elas ao inves de matrices/punteiros do C
 

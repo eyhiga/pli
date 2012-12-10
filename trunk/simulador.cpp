@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 		tMax = ceil(tempo);
 
 		/* Chama escalonador */
-		int saida = ILP(&dag, &grid, tMax, P_CHASSI, P_CORE, P_LINECARD, "");
+		int saida = ILP(&dag, &grid, tMax, P_CHASSI, P_CORE, P_LINECARD);
 		printf("Saida: %d\n", saida);
 		
 		/* Calcula novo estado da rede */
