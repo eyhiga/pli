@@ -10,8 +10,8 @@ LIBFORMAT  = static_pic
 #
 #------------------------------------------------------------
 
-CPLEXDIR      = /home/eyhiga/ILOG/CPLEX_Studio125/cplex
-CONCERTDIR    = /home/eyhiga/ILOG/CPLEX_Studio125/concert
+CPLEXDIR      = /home/rodrigo/ILOG/CPLEX_Studio125/cplex
+CONCERTDIR    = /home/rodrigo/ILOG/CPLEX_Studio125/concert
 # ---------------------------------------------------------------------
 # Compiler selection 
 # ---------------------------------------------------------------------
@@ -69,6 +69,9 @@ all: dag grid ilp simulador
 
 all-64: dag grid ilp simulador
 	$(CCC) $(CCFLAGS64) dag.o grid.o ilp.o simulador.o -o simulador-64 $(CCLNFLAGS64)
+
+execute: all
+	./simulador NOVA_SEMENTE
 
 # ------------------------------------------------------------
 
