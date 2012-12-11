@@ -52,7 +52,7 @@ float gama, float lambda) {
 			X[i][j]  = IloBoolVarArray(env, grid->m);
 		}
 	}
-   
+
 	/* Y, indica transferência de dados entre duas tarefas
 	 * Nota: verificar limites de tamanho, pois nem todas tarefas
 	 * possuem dependências.
@@ -98,9 +98,11 @@ float gama, float lambda) {
 	/* Parte do consumo por máquina */
 	for(int k=0; k<grid->m; k++)
 	{
-		for(int t=0; t<dag->n; t++)
+		for(int t=0; t<tMax; t++)
 		{
-			expr_objetivo += alpha * P[k][t] + lambda * U[k][t];
+			//expr_objetivo += alpha * P[k][t] + lambda  * U[k][t];
+			expr_objetivo += alpha * P[k][t];
+			expr_objetivo += lambda *  U[k][t];
 		}
 	}
 
