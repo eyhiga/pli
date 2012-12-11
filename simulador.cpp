@@ -40,7 +40,12 @@ int main(int argc, char *argv[]) {
 	char arquivoDag[100];
 	DAG dag;
 	Grid grid;
-  
+
+	if (argc != 2) { // 2, pois primeiro argumento é nome do programa
+		fprintf(stderr, "Chamada invalida. Uso: simulador SEMENTE\n");
+		return -1;
+	}
+
 	/* Inicia gerador aleatórios */
 	unsigned int seed;
 	if (strcmp(argv[1],NOVA_SEMENTE) == 0) { // deve usar nova semente
@@ -63,16 +68,18 @@ int main(int argc, char *argv[]) {
 	grid.N[0][0] = 1; // N[x][x]=1 para todo x<m (enlace de host pra ele mesmo)
 	grid.TB[0][0] = 0; // tempo de transmissão para próprio host é nulo
 	grid.P_E[0][0] = 0; // enlace sem custo associado, não existe na prática
-	
+
 	float velocidadeMaisLenta = grid.TI[hostMaisLento(&grid)];
 
 	while (simulando) {
+
 		int intervalo = 3; // tempo de diferença que chegará a próxima requisição
 		int dagEscolhido;
 		tempo += intervalo;
-		
+
 		/* Sorteia nova requisição */
 		dagEscolhido = sorteiaGrafo();
+
 		switch (dagEscolhido) {
 			case MONTAGE:
 				strcpy(arquivoDag, ARQUIVO_MONTAGE);
@@ -88,7 +95,7 @@ int main(int argc, char *argv[]) {
 		/* Carrega DAG */
 		carregaGrafo(arquivoDag, &dag);
 		sorteiaPesosGrafo(&dag);
-		
+
 		/* Calcula T_max (tempo de execução sequencial na máquina mais lenta
 		da grade do DAG */
 		float tempo = 0;
@@ -101,7 +108,7 @@ int main(int argc, char *argv[]) {
 		/* Chama escalonador */
 		int saida = ILP(&dag, &grid, tMax, P_CHASSI, P_CORE, P_LINECARD);
 		printf("Saida: %d\n", saida);
-		
+
 		/* Calcula novo estado da rede */
 		
 		/* Atualiza requisições recebidas e verifica se continua simulação */
