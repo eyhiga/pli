@@ -357,22 +357,19 @@ float gama, float lambda) {
 	//
 	// Atualizar variáveis de saída
 	//
-	/*try {
-		for (int i = 0; i < parametros->num_nf; i++) {
-			for (int j = 0; j < parametros->num_nv; j++) {
-				for (int k = 0; k < parametros->num_ni; k++) {
-					saida_mapnet->X[i][j][k] = cplex.getValue(X[i][j][k]);
-				}
-			}
+	try {
+		printf("\n\n### SAIDA OTIMIZADOR ###\n\n\n");
+		printf("tMax: %d\n", tMax);
+		printf("### X ###\n", tMax);
+		for (int i = 0; i < dag->n; i++)
+		for (int j = 0; j < tMax; j++)
+		for (int k = 0; k < grid->m; k++) {
+			if (cplex.getValue(X[i][j][k]))
+				printf("X[%d][%d][%d] = 1\n", i, j, k);
 		}
 
-		for (int i = 0; i < parametros->num_nf; i++) {
-			for (int j = 0; j < parametros->num_nf; j++) {
-				for (int k = 0; k < parametros->num_ev; k++) {
-					saida_mapnet->Y[i][j][k] = cplex.getValue(Y[i][j][k]);
-				}
-			}
-		}
+		printf("\n\n\n\n");
+
 	} catch (IloCplex::Exception e) {
 		cout << "ERRO (GetStatus): " << e.getStatus() << endl;
 		cout << "ERRO (GetMessage): " << e.getMessage() << endl;
@@ -384,7 +381,7 @@ float gama, float lambda) {
 				mapeou = -1;
 			}
 		}
-	}*/
+	}
 
 	//
 	// Saída do CPLEX
