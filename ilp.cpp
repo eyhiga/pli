@@ -75,7 +75,7 @@ float gama, float lambda) {
 	IloIntVarArray2 U(env, grid->m);
 	for(int i=0; i < grid->m; i++)
 	{
-		U[i] = IloIntVarArray(env, tMax);
+		U[i] = IloIntVarArray(env, tMax, 0, grid->C[i]);
 	}
 
 	/* P, indica se chassi está em uso */
