@@ -188,7 +188,7 @@ float gama, float lambda) {
 			
 		}
 	}
-  
+
 	// Restricao 4
 	for(int k=0; k < grid->m; k++)
 	{
@@ -236,7 +236,7 @@ float gama, float lambda) {
 
 			for(int j=0; j < dag->n; j++)
 			{
-				for(int s=t; s < ceil(t + dag->S[j] * grid->TI[k] - 1); s++)
+				for(int s=t; (s < ceil(t + dag->S[j] * grid->TI[k] - 1)) && (s < tMax); s++)
 				{
 					expr_restricao7 += X[j][s][k];
 				}
@@ -331,12 +331,14 @@ float gama, float lambda) {
 				}
 			}
 		}*/
-		cplex.setParam(IloCplex::WorkMem, 512);
+		cplex.setParam(IloCplex::WorkMem, 4000);
 		cplex.setParam(IloCplex::WorkDir, "./");
 		cplex.setParam(IloCplex::MemoryEmphasis, 1); // Ativo
 		cplex.setParam(IloCplex::Threads, 1);   // "Cores" quantidade de nucleos a usar. Olhar restrições de uso das simuladoras (n/2 por usuário)
 		cplex.setParam(IloCplex::ParallelMode, 0);   // Automatico
+
 		cplex.solve();
+
 	} catch (IloCplex::Exception e) {
 		cout << "ERRO (GetStatus): " << e.getStatus() << endl;
 		cout << "ERRO (GetMessage): " << e.getMessage() << endl;
