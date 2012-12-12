@@ -146,7 +146,7 @@ float gama, float lambda) {
 	{
 		for(int k=0; k < grid->m; k++)
 		{
-			for(int t=0; t < ceil(dag->S[j] * grid->TI[k]); t++)
+			for(int t=0; t < ceil(dag->S[j] * grid->TI[k])-1; t++)
 			{
 				IloExpr expr_restricao2(env);
 				expr_restricao2 = X[j][t][k];
@@ -193,7 +193,7 @@ float gama, float lambda) {
 	for(int k=0; k < grid->m; k++)
 	{
 		for (int j=0; j < dag->n; j++) {
-			for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k]); t++)
+			for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k])-1; t++)
 			{
 				IloExpr expr_restricao4(env);
 				for(int s=t; s < ceil(t-dag->S[j] * grid->TI[k] - 1); s++)
