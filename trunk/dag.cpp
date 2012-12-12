@@ -181,3 +181,11 @@ void sorteiaPesosGrafo(DAG *dag) {
 			dag->B[i][j] = (rand() % (PESO_MAX - 1))+1; 
 	}	
 }
+
+DAG dag1task(int peso) {
+	DAG dag;
+	dag.n = 1;
+	dag.S[0] = peso;
+	dag.D[0][0] = 0; // não há aresta
+	return dag;
+}

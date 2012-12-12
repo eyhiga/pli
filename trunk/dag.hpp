@@ -15,4 +15,10 @@ int carregaGrafo(char *arquivo, DAG *dag);
 void salvaGrafo(char *arquivo, DAG *dag);
 void sorteiaPesosGrafo(DAG *dag);
 
+/*
+ * cria dag que possui somente uma tarefa, com o
+ * peso informado
+ */
+DAG dag1task(int peso);
+
 #endif
