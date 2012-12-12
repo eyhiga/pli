@@ -171,7 +171,7 @@ float gama, float lambda) {
 					for(int k=0; k < grid->m; k++)
 					if (grid->N[k][l] == 1)
 					{
-						for(int s=0; s < ceil(t-dag->S[j] * grid->TI[l] - dag->B[i][j] * grid->TB[k][l]);s++)
+						for(int s=0; s <= ceil(t-dag->S[j] * grid->TI[l] - dag->B[i][j] * grid->TB[k][l]);s++)
 						{
 							expr_restricao3_1 += X[i][s][k];
 						}
@@ -196,7 +196,7 @@ float gama, float lambda) {
 			for(int t=0; t < ceil(tMax - dag->S[j] * grid->TI[k])-1; t++)
 			{
 				IloExpr expr_restricao4(env);
-				for(int s=t; s < ceil(t-dag->S[j] * grid->TI[k] - 1); s++)
+				for(int s=t; s <= ceil(t-dag->S[j] * grid->TI[k] - 1); s++)
 				{
 					expr_restricao4 += X[j][s][k];
 				}
@@ -236,7 +236,7 @@ float gama, float lambda) {
 
 			for(int j=0; j < dag->n; j++)
 			{
-				for(int s=t; (s < ceil(t + dag->S[j] * grid->TI[k] - 1)) && (s < tMax); s++)
+				for(int s=t; (s <= ceil(t + dag->S[j] * grid->TI[k] - 1)) && (s < tMax); s++)
 				{
 					expr_restricao7 += X[j][s][k];
 				}
@@ -367,7 +367,6 @@ float gama, float lambda) {
 			if (cplex.getValue(X[i][j][k]))
 				printf("X[%d][%d][%d] = 1\n", i, j, k);
 		}
-
 		printf("\n\n\n\n");
 
 	} catch (IloCplex::Exception e) {
